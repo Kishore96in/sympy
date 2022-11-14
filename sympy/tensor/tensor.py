@@ -4390,7 +4390,7 @@ class WildTensor(Tensor, AtomicExpr):
         return obj
 
     def matches(self, expr, repl_dict=None, old=False):
-        if not isinstance(expr, Tensor):
+        if not isinstance(expr, TensExpr):
             return None
         if len(expr.get_indices()) not in self.ninds:
             return None
