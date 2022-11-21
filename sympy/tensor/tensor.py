@@ -4054,6 +4054,7 @@ class TensMul(TensExpr, AssocOp):
         query_tens_sift_heads = sift(query_sifted["Tensor"], lambda x: x.component)
         expr_tens_sift_heads = sift(expr_sifted["Tensor"], lambda x: x.component)
 
+        #First check which tensors are the same in both query and expression
         matched_e_tensors = [] #Used to make sure that the same tensor in expr is not matched with more than one tensor in the query.
         for head in query_tens_sift_heads.keys():
             if head not in expr_tens_sift_heads.keys():
@@ -4087,6 +4088,7 @@ class TensMul(TensExpr, AssocOp):
                 if not matched_this_q:
                     return None
 
+        #Try to match WildTensor instances which have indices
         remaining_e_tensors = [t for t in expr_sifted["Tensor"] if t not in matched_e_tensors]
         indexless_wilds, wilds = sift(query_sifted["WildTensor"], lambda x: len(x.get_free_indices()) == 0, binary=True)
         for w in wilds:
@@ -4099,6 +4101,7 @@ class TensMul(TensExpr, AssocOp):
             else:
                 repl_dict.update(m)
 
+        #Try to match indexless WildTensor instances
         tensors_matched = TensMul(*[repl_dict[w.component] for w in wilds], *matched_e_tensors).atoms(Tensor)
         remaining_e_tensors = [t for t in expr_sifted["Tensor"] if t not in tensors_matched]
         if len(indexless_wilds) > 0:
@@ -4111,6 +4114,7 @@ class TensMul(TensExpr, AssocOp):
         elif len(remaining_e_tensors) > 0:
             return None
 
+        #Try to match the non-tensorial coefficient
         m = self.coeff.matches(expr.coeff)
         if m is None:
             return None
