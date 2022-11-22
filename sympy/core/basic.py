@@ -1373,7 +1373,7 @@ class Basic(Printable, metaclass=ManagedProperties):
         # no success
         return False
 
-    def replace(self, query, value, map=False, simultaneous=True, exact=None):
+    def replace(self, query, value, map=False, simultaneous=True, exact=None, repeat=False):
         """
         Replace matching subexpressions of ``self`` with ``value``.
 
@@ -1396,6 +1396,8 @@ class Basic(Printable, metaclass=ManagedProperties):
         Setting this to False accepts a match of 0; while setting it True
         accepts all matches that have a 0 in them. See example below for
         cautions.
+
+        If repeat=True (default: False), replace is repeatedly applied on the expression until it no longer changes.
 
         The list of possible combinations of queries and replacement values
         is listed below:
@@ -1629,6 +1631,22 @@ class Basic(Printable, metaclass=ManagedProperties):
             return expr
 
         rv = walk(self, rec_replace)
+        if repeat:
+            if map:
+                rv_again, mapping_again = walk(rv, rec_replace)
+            else:
+                rv_again = walk(rv, rec_replace)
+
+            while rv_again != rv:
+                rv = rv_again
+                if map:
+                    mapping.update(mapping_again)
+
+                if map:
+                    rv_again, mapping_again = walk(rv, rec_replace)
+                else:
+                    rv_again = walk(rv, rec_replace)
+
         return (rv, mapping) if map else rv
 
     def find(self, query, group=False):
