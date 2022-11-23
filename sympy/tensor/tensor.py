@@ -2398,6 +2398,7 @@ class TensExpr(Expr, metaclass=_TensorMetaclass):
 
         if not isinstance(expr, TensExpr):
             if len(self.get_free_indices()) > 0:
+                #self has indices, but expr does not.
                 return None
         else:
             if set(self.get_free_indices()) != set(expr.get_free_indices()):
