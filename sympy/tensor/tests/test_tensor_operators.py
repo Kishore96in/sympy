@@ -116,11 +116,11 @@ def test_replace_arrays_partial_derivative():
     assert expr.replace_with_arrays({A(i): [x, y], L: diag(1, -1)}, []) == 2
 
     expr = PartialDerivative(H(i, j) + H(j, i), A(i))
-    assert expr.get_indices() == [L_0, j, -L_0]
+    assert expr.get_indices() == [j, L_0, -L_0]
     assert expr.get_free_indices() == [j]
 
     expr = PartialDerivative(H(i, j) + H(j, i), A(k))*B(-i)
-    assert expr.get_indices() == [L_0, j, -k, -L_0]
+    assert expr.get_indices() == [j, L_0, -k, -L_0]
     assert expr.get_free_indices() == [j, -k]
 
     expr = PartialDerivative(A(i)*(H(-i, j) + H(j, -i)), A(j))
