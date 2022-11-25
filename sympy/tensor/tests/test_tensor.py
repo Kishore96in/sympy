@@ -1965,6 +1965,15 @@ def test_tensor_matching():
     """
     Test match and replace with the pattern being a WildTensor or a WildTensorIndex
     """
+    def check_tens_eq(expr1, expr2):
+        """
+        Canonicalizes the two given tensor expressions and checks equality.
+        """
+        diff = expr1 - expr2
+        if diff != 0:
+            diff = diff.canon_bp().simplify()
+        assert diff == 0
+
     R3 = TensorIndexType('R3', dim=3)
     p, q, r = tensor_indices("p q r", R3)
     a,b,c = symbols("a b c", cls = WildTensorIndex, tensor_index_type=R3, ignore_updown=True)
@@ -1990,6 +1999,59 @@ def test_tensor_matching():
     assert W(p,q).matches( A(q,p) ) == {W(p,q).head: _WildTensExpr(A(q, p))}
     assert U(p,q).matches( A(q,p) ) == None
     assert ( K(q)*K(p) ).replace( W(q,p), 1) == 1
+
+    #Matching TensExpr
+    assert(
+        ( wi*K(p) ).matches( K(p) )
+        == {wi: 1}
+        )
+    check_tens_eq(
+        (K(p) * V(-p)).replace( W(q) * V(-q), 1),
+        1
+        )
+    check_tens_eq(
+        (K(q) * K(p) ).replace( W(q,p), 1),
+        1
+        )
+    check_tens_eq(
+        ( K(q) * K(p) * V(-p) ).replace( W(q,p) * V(-p), 1),
+        1
+        )
+    check_tens_eq(
+        ( K(p) * V(-p) ).replace( K(-p)* V(p), 1 ),
+        1
+        )
+    check_tens_eq(
+        ( K(q) * K(p) * V(-p) ).replace( W(q)* U(p) * V(-p), 1),
+        1
+        )
+    check_tens_eq(
+        (K(p)*V(q)).replace(
+            W()*K(p)*V(q),
+            W()*V(p)*V(q),
+            ),
+        V(p)*V(q)
+        )
+    check_tens_eq(
+        eps(p,-q,r).replace(
+            eps(a,b,c), 1
+            ),
+        1
+        )
+    check_tens_eq(
+        ( eps(r,p,q) * eps(-r, -s, -t) ).replace(
+            eps(r, a, b) * eps(-r, c, d),
+            delta(a, c)*delta(b, d) - delta(a, d)*delta(b, c),
+            ),
+        delta(p,-s)*delta(q,-t) - delta(p,-t)*delta(q,-s)
+        )
+    check_tens_eq(
+        ( eps(r,p,q) * eps(-r, -p, -q) ).replace(
+            eps(c, a, b) * eps(-c, d, f),
+            delta(a, d)*delta(b, f) - delta(a, f)*delta(b, d),
+            ).contract_delta(delta),
+        6,
+        )
 
 def test_tensorsymmetry():
     with warns_deprecated_sympy():
