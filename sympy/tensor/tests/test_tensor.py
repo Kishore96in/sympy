@@ -2053,6 +2053,16 @@ def test_tensor_matching():
         6,
         )
 
+    #Multiple occurrence of WildTensor in value
+    check_tens_eq(
+        ( K(p)*V(q) ).replace(W(q)*K(p), W(p)*W(q)),
+        V(p)*V(q)
+        )
+    check_tens_eq(
+        ( K(p)*V(q)*V(r) ).replace(W(q,r)*K(p), W(p,r)*W(q,s)*V(-s) ),
+        V(p)*V(r)*V(q)*V(s)*V(-s)
+        )
+
 def test_tensorsymmetry():
     with warns_deprecated_sympy():
         tensorsymmetry([1]*2)
