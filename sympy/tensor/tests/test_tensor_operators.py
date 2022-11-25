@@ -4,7 +4,8 @@ from sympy.testing.pytest import raises
 from sympy.tensor.toperators import PartialDerivative
 from sympy.tensor.tensor import (TensorIndexType,
                                  tensor_indices,
-                                 TensorHead, tensor_heads)
+                                 TensorHead, tensor_heads,
+                                 WildTensorIndex)
 from sympy.core.numbers import Rational
 from sympy.core.symbol import symbols
 from sympy.matrices.dense import diag
@@ -16,7 +17,8 @@ from sympy.core.random import randint
 L = TensorIndexType("L")
 i, j, k, m, m1, m2, m3, m4 = tensor_indices("i j k m m1 m2 m3 m4", L)
 i0 = tensor_indices("i0", L)
-L_0, L_1 = tensor_indices("L_0 L_1", L)
+L_0 = WildTensorIndex("L_0", L, ignore_updown=True)
+L_1 = WildTensorIndex("L_1", L, ignore_updown=True)
 
 A, B, C, D = tensor_heads("A B C D", [L])
 

@@ -450,7 +450,7 @@ def test_indices():
     A, B = tensor_heads('A B', [Lorentz]*2, TensorSymmetry.fully_symmetric(2))
     t = A(a,b)*B(-b,c)
     indices = t.get_indices()
-    L_0 = TensorIndex('L_0', Lorentz)
+    L_0 = WildTensorIndex('L_0', Lorentz, ignore_updown=True)
     assert indices == [a, L_0, -L_0, c]
     raises(ValueError, lambda: tensor_indices(3, Lorentz))
     raises(ValueError, lambda: A(a,b,c))
@@ -1700,8 +1700,8 @@ def test_issue_11020_TensAdd_data():
 def test_index_iteration():
     L = TensorIndexType("Lorentz", dummy_name="L")
     i0, i1, i2, i3, i4 = tensor_indices('i0:5', L)
-    L0 = tensor_indices('L_0', L)
-    L1 = tensor_indices('L_1', L)
+    L0 = WildTensorIndex('L_0', L, ignore_updown=True)
+    L1 = WildTensorIndex('L_1', L, ignore_updown=True)
     A = TensorHead("A", [L, L])
     B = TensorHead("B", [L, L], TensorSymmetry.fully_symmetric(2))
 
@@ -1752,7 +1752,7 @@ def test_tensor_expand():
     L = TensorIndexType("L")
 
     i, j, k = tensor_indices("i j k", L)
-    L_0 = TensorIndex("L_0", L)
+    L_0 = WildTensorIndex("L_0", L, ignore_updown=True)
 
     A, B, C, D = tensor_heads("A B C D", [L])
 
