@@ -1976,6 +1976,7 @@ def test_tensor_matching():
     W = WildTensorHead('W', unordered_indices=True)
     U = WildTensorHead('U')
 
+    #Matching wild objects
     assert (
         W().matches( K(p)*V(q) )
         == {
