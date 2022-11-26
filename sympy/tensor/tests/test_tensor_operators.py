@@ -4,8 +4,7 @@ from sympy.testing.pytest import raises
 from sympy.tensor.toperators import PartialDerivative
 from sympy.tensor.tensor import (TensorIndexType,
                                  tensor_indices,
-                                 TensorHead, tensor_heads,
-                                 WildTensorIndex)
+                                 TensorHead, tensor_heads)
 from sympy.core.numbers import Rational
 from sympy.core.symbol import symbols
 from sympy.matrices.dense import diag
@@ -17,8 +16,7 @@ from sympy.core.random import randint
 L = TensorIndexType("L")
 i, j, k, m, m1, m2, m3, m4 = tensor_indices("i j k m m1 m2 m3 m4", L)
 i0 = tensor_indices("i0", L)
-L_0 = WildTensorIndex("L_0", L, ignore_updown=True)
-L_1 = WildTensorIndex("L_1", L, ignore_updown=True)
+L_0, L_1 = tensor_indices("L_0 L_1", L)
 
 A, B, C, D = tensor_heads("A B C D", [L])
 
@@ -116,11 +114,11 @@ def test_replace_arrays_partial_derivative():
     assert expr.replace_with_arrays({A(i): [x, y], L: diag(1, -1)}, []) == 2
 
     expr = PartialDerivative(H(i, j) + H(j, i), A(i))
-    assert expr.get_indices() == [j, L_0, -L_0]
+    assert expr.get_indices() == [L_0, j, -L_0]
     assert expr.get_free_indices() == [j]
 
     expr = PartialDerivative(H(i, j) + H(j, i), A(k))*B(-i)
-    assert expr.get_indices() == [j, L_0, -k, -L_0]
+    assert expr.get_indices() == [L_0, j, -k, -L_0]
     assert expr.get_free_indices() == [j, -k]
 
     expr = PartialDerivative(A(i)*(H(-i, j) + H(j, -i)), A(j))
