@@ -2040,7 +2040,7 @@ def test_tensor_matching():
         )
     check_tens_eq(
         ( eps(r,p,q) * eps(-r, -s, -t) ).replace(
-            eps(r, a, b) * eps(-r, c, d),
+            eps(e, a, b) * eps(-e, c, d),
             delta(a, c)*delta(b, d) - delta(a, d)*delta(b, c),
             ),
         delta(p,-s)*delta(q,-t) - delta(p,-t)*delta(q,-s)
