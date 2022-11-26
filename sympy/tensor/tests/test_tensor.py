@@ -1987,6 +1987,7 @@ def test_tensor_matching():
     assert (
         W(a).matches( K(p) )
         == {
+            a:p,
             W(a).head: _WildTensExpr(K(p))
             }
         )
