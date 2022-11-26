@@ -2006,7 +2006,7 @@ def test_tensor_matching():
         == {wi: 1}
         )
     check_tens_eq(
-        (K(p) * V(-p)).replace( W(q) * V(-q), 1),
+        (K(p) * V(-p)).replace( W(a) * V(-a), 1),
         1
         )
     check_tens_eq(
@@ -2014,11 +2014,11 @@ def test_tensor_matching():
         1
         )
     check_tens_eq(
-        ( K(q) * K(p) * V(-p) ).replace( W(q,p) * V(-p), 1),
+        ( K(q) * K(p) * V(-p) ).replace( W(q,a) * V(-a), 1),
         1
         )
     check_tens_eq(
-        ( K(p) * V(-p) ).replace( K(-p)* V(p), 1 ),
+        ( K(p) * V(-p) ).replace( K(-a)* V(a), 1 ),
         1
         )
     check_tens_eq(
