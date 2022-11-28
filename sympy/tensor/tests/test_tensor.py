@@ -2098,6 +2098,24 @@ def test_TensMul_subs():
     assert ( K(p)*A(q,-q)*K(-p) ).doit() == K(p)*A(q,-q)*K(-p)
     assert ( K(p)*V(-p) ).replace( K(a), V(a)*V(q)*V(-q) ) == V(p)*V(q)*V(-q)*V(-p)
 
+def test_replace_repeat():
+    R3 = TensorIndexType('R3', dim=3)
+    p, q, r = tensor_indices("p q r", R3)
+    a = WildTensorIndex("a", tensor_index_type=R3, ignore_updown=True)
+    wi = Wild("wi")
+    W = WildTensorHead('W', unordered_indices=True)
+    K = TensorHead("K", [R3])
+    k = Symbol("K")
+
+    assert (
+        ( K(p)*K(-p)*K(q)*K(-q)*K(r)*K(-r) ).replace(
+            wi * W() * K(a) * K(-a) ,
+            wi * W() * k**2 ,
+            repeat=True,
+            ).doit()
+        == k**6
+        )
+
 def test_tensorsymmetry():
     with warns_deprecated_sympy():
         tensorsymmetry([1]*2)
