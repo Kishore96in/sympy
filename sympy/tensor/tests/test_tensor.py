@@ -1985,6 +1985,7 @@ def test_tensor_matching():
     W = WildTensorHead('W', unordered_indices=True)
     U = WildTensorHead('U')
 
+    #Matching wild objects
     assert a.matches(q) == {a:q}
     assert a.matches(-q) == {a:-q}
     assert g.matches(-q) == None
