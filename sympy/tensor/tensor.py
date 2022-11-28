@@ -4123,7 +4123,6 @@ class WildTensorHead(TensorHead):
 
     >>> W = WildTensorHead("W")
 
-    TODO: Should the stuff below be in the docstring of the __call__ function?
     Calling it with a ``TensorIndex`` creates a ``WildTensor`` instance.
 
     >>> type(W(p))
