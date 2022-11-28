@@ -2011,10 +2011,6 @@ def test_tensor_matching():
         1
         )
     check_tens_eq(
-        (K(q) * K(p) ).replace( W(q,p), 1),
-        1
-        )
-    check_tens_eq(
         ( K(q) * K(p) * V(-p) ).replace( W(q,a) * V(-a), 1),
         1
         )
