@@ -2033,12 +2033,6 @@ def test_tensor_matching():
         V(p)*V(q)
         )
     check_tens_eq(
-        eps(p,-q,r).replace(
-            eps(a,b,c), 1
-            ),
-        1
-        )
-    check_tens_eq(
         ( eps(r,p,q) * eps(-r, -s, -t) ).replace(
             eps(e, a, b) * eps(-e, c, d),
             delta(a, c)*delta(b, d) - delta(a, d)*delta(b, c),
