@@ -2086,14 +2086,11 @@ def test_replace_repeat():
     K = TensorHead("K", [R3])
     k = Symbol("K")
 
-    assert (
-        ( K(p)*K(-p)*K(q)*K(-q)*K(r)*K(-r) ).replace(
+    assert ( K(p)*K(-p)*K(q)*K(-q)*K(r)*K(-r) ).replace(
             wi * W() * K(a) * K(-a) ,
             wi * W() * k**2 ,
             repeat=True,
-            ).doit()
-        == k**6
-        )
+            ).doit() == k**6
 
 def test_tensorsymmetry():
     with warns_deprecated_sympy():
