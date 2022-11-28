@@ -2000,7 +2000,7 @@ def test_tensor_matching():
     assert U(p,q).matches( A(q,p) ) == None
     assert ( K(q)*K(p) ).replace( W(q,p), 1) == 1
 
-    #Matching TensExpr
+    #Matching TensMul
     assert(
         ( wi*K(p) ).matches( K(p) )
         == {wi: 1}
