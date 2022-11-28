@@ -2077,6 +2077,24 @@ def test_TensAdd_matching():
         W(p,q) + 3*K(p)*V(q)
         ).doit() == K(p)*V(q) + K(q)*V(p) + 3*K(p)*V(q)
 
+def test_replace_repeat():
+    R3 = TensorIndexType('R3', dim=3)
+    p, q, r = tensor_indices("p q r", R3)
+    a = WildTensorIndex("a", tensor_index_type=R3, ignore_updown=True)
+    wi = Wild("wi")
+    W = WildTensorHead('W', unordered_indices=True)
+    K = TensorHead("K", [R3])
+    k = Symbol("K")
+
+    assert (
+        ( K(p)*K(-p)*K(q)*K(-q)*K(r)*K(-r) ).replace(
+            wi * W() * K(a) * K(-a) ,
+            wi * W() * k**2 ,
+            repeat=True,
+            ).doit()
+        == k**6
+        )
+
 def test_tensorsymmetry():
     with warns_deprecated_sympy():
         tensorsymmetry([1]*2)
