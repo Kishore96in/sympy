@@ -5068,4 +5068,4 @@ def _expand(expr, **kwargs):
         return expr.expand(**kwargs)
 
 def _get_wilds(expr):
-    return [ a for a in expr.atoms(Wild, WildFunction, WildTensor, WildTensorIndex, WildTensorHead) ]
+    return list(expr.atoms(Wild, WildFunction, WildTensor, WildTensorIndex, WildTensorHead))
