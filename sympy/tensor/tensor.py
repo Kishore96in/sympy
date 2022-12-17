@@ -4284,7 +4284,7 @@ class TensMul(TensExpr, AssocOp):
         if self_renamed is None:
             return None
         else:
-            return self_renamed._subs(old, new)
+            return self_renamed._subs(old, new).doit(deep=False)
 
     def _eval_rewrite_as_Indexed(self, *args, **kwargs):
         from sympy.concrete.summations import Sum
