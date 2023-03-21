@@ -2137,12 +2137,6 @@ class TensExpr(Expr, ABC):
     def _get_indices_permutation(indices1, indices2):
         return [indices1.index(i) for i in indices2]
 
-    def expand(self, deep=True, **hints):
-        return _expand(self, deep=deep, **hints)
-
-    def _expand(self, **kwargs):
-        return self
-
     def _get_free_indices_set(self):
         indset = set()
         for arg in self.args:
@@ -2604,11 +2598,6 @@ class TensAdd(TensExpr, AssocOp):
             indices.extend([i for i in get_indices(arg) if i not in indices])
         return indices
 
-    def _expand(self, deep=True, **hints):
-        if deep:
-            return TensAdd(*[_expand(i, deep=deep, **hints) for i in self.args]).doit(deep=False)
-        else:
-            return self.doit(deep=False)
 
     def __call__(self, *indices):
         deprecate_call()
@@ -3049,9 +3038,6 @@ class Tensor(TensExpr):
 
     def split(self):
         return [self]
-
-    def _expand(self, **kwargs):
-        return self
 
     def sorted_components(self):
         return self
@@ -3840,18 +3826,6 @@ class TensMul(TensExpr, AssocOp):
             else:
                 res *= arg
         return splitp
-
-    def _expand(self, deep=True, **hints):
-        # TODO: temporary solution, in the future this should be linked to
-        # `Expr.expand`.
-        if deep:
-            args = [_expand(arg, deep=deep, **hints) for arg in self.args]
-        else:
-            args = self.args
-        args1 = [arg.args if isinstance(arg, (Add, TensAdd)) else (arg,) for arg in args]
-        return TensAdd(*[
-            TensMul(*i).doit(deep=False) for i in itertools.product(*args1)]
-        ).doit(deep=False)
 
     def _eval_expand_tensor(self, **hints):
         args1 = [arg.args if isinstance(arg, (Add, TensAdd)) else (arg,) for arg in self.args]
@@ -5264,13 +5238,6 @@ def substitute_indices(t, *index_tuples):
     if not isinstance(t, TensExpr):
         return t
     return t.substitute_indices(*index_tuples)
-
-
-def _expand(expr, deep=True, **kwargs):
-    if isinstance(expr, TensExpr):
-        return expr._expand(deep=deep, **kwargs)
-    else:
-        return expr.expand(deep=deep, **kwargs)
 
 
 def _get_wilds(expr):
