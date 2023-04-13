@@ -300,7 +300,7 @@ def _trace_single_line(t):
             t3 = t3.contract_metric(g)
             return t3
 
-    t = t.expand(tensor=True, deep=True)
+    t = t.expand()
     if isinstance(t, TensAdd):
         a = [_trace_single_line1(x)*x.coeff for x in t.args]
         return TensAdd(*a)
