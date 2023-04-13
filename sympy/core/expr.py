@@ -3628,7 +3628,7 @@ class Expr(Basic, EvalfMixin):
 
     @cacheit
     def expand(self, deep=True, modulus=None, power_base=True, power_exp=True,
-            mul=True, log=True, multinomial=True, basic=True, **hints):
+            mul=True, log=True, multinomial=True, basic=True, tensor=True, **hints):
         """
         Expand an expression using hints.
 
@@ -3639,7 +3639,7 @@ class Expr(Basic, EvalfMixin):
         from sympy.simplify.radsimp import fraction
 
         hints.update(power_base=power_base, power_exp=power_exp, mul=mul,
-           log=log, multinomial=multinomial, basic=basic)
+           log=log, multinomial=multinomial, basic=basic, tensor=tensor)
 
         expr = self
         if hints.pop('frac', False):
