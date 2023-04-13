@@ -538,7 +538,7 @@ def test_add1():
     t2a = B(d0, a) + A(d0, a)
     t2 = A(b, -d0)*t2a
     assert str(t2) == 'A(b, -L_0)*(A(L_0, a) + B(L_0, a))'
-    t2 = t2.expand(tensor=True)
+    t2 = t2.expand()
     assert str(t2) == 'A(b, -L_0)*A(L_0, a) + A(b, -L_0)*B(L_0, a)'
     t2 = t2.canon_bp()
     assert str(t2) == 'A(a, L_0)*A(b, -L_0) + A(b, L_0)*B(a, -L_0)'
@@ -558,10 +558,10 @@ def test_add1():
     t1 = p(d0)
     t3 = t1*t2
     assert str(t3) == 'p(L_0)*(2*q(-L_0) + p(-L_0))'
-    t3 = t3.expand(tensor=True)
+    t3 = t3.expand()
     assert str(t3) == 'p(L_0)*p(-L_0) + 2*p(L_0)*q(-L_0)'
     t3 = t2*t1
-    t3 = t3.expand(tensor=True)
+    t3 = t3.expand()
     assert str(t3) == 'p(-L_0)*p(L_0) + 2*q(-L_0)*p(L_0)'
     t3 = t3.canon_bp()
     assert str(t3) == 'p(L_0)*p(-L_0) + 2*p(L_0)*q(-L_0)'
@@ -603,7 +603,7 @@ def test_add1():
     assert t1 == 0
     t = 1 - (A(a, -a) + B(a, -a))
     t1 = 1 + (A(a, -a) + B(a, -a))
-    assert (t + t1).expand(tensor=True).equals(2)
+    assert (t + t1).expand().equals(2)
     t2 = 1 + A(a, -a)
     assert t1 != t2
     assert t2 != TensMul.from_data(0, [], [], [])
@@ -1406,7 +1406,7 @@ def test_valued_tensor_expressions():
         assert rank2coeff[3, 3] == 3 * pz * x1
         coeff_expr = ((x1 * A(i4)) * (B(-i4) / x2)).data
 
-        assert coeff_expr.expand(tensor=True) == -px*x1/x2 - 2*py*x1/x2 - 3*pz*x1/x2
+        assert coeff_expr.expand() == -px*x1/x2 - 2*py*x1/x2 - 3*pz*x1/x2
 
         add_expr = A(i0) + B(i0)
 
@@ -1431,7 +1431,7 @@ def test_valued_tensor_expressions():
         assert expr4 * 2 == expr3
         expr5 = (expr4 * BA(-i1, -i0))
 
-        assert expr5.data.expand(tensor=True) == 28*E*x1 + 12*px*x1 + 20*py*x1 + 28*pz*x1 + 136*x2 + 3*x3
+        assert expr5.data.expand() == 28*E*x1 + 12*px*x1 + 20*py*x1 + 28*pz*x1 + 136*x2 + 3*x3
 
 
 def test_valued_tensor_add_scalar():
@@ -1481,7 +1481,7 @@ def test_noncommuting_components():
         assert vtp2.data != a**2 + 2*b*c + d**2
 
         Vc = (b * V1(i1, -i1)).data
-        assert Vc.expand(tensor=True) == b * a + b * d
+        assert Vc.expand() == b * a + b * d
 
 
 def test_valued_non_diagonal_metric():
@@ -1793,7 +1793,7 @@ def test_tensor_expand():
     expr = A(i)*(A(-i)+B(-i))
     assert expr.args == (A(L_0), A(-L_0) + B(-L_0))
     assert expr != A(i)*A(-i) + A(i)*B(-i)
-    assert expr.expand(tensor=True) == A(i)*A(-i) + A(i)*B(-i)
+    assert expr.expand() == A(i)*A(-i) + A(i)*B(-i)
     assert str(expr) == "A(L_0)*(A(-L_0) + B(-L_0))"
 
     expr = A(i)*A(j) + A(i)*B(j)
@@ -1801,19 +1801,19 @@ def test_tensor_expand():
 
     expr = A(-i)*(A(i)*A(j) + A(i)*B(j)*C(k)*C(-k))
     assert expr != A(-i)*A(i)*A(j) + A(-i)*A(i)*B(j)*C(k)*C(-k)
-    assert expr.expand(tensor=True) == A(-i)*A(i)*A(j) + A(-i)*A(i)*B(j)*C(k)*C(-k)
+    assert expr.expand() == A(-i)*A(i)*A(j) + A(-i)*A(i)*B(j)*C(k)*C(-k)
     assert str(expr) == "A(-L_0)*(A(L_0)*A(j) + A(L_0)*B(j)*C(L_1)*C(-L_1))"
     assert str(expr.canon_bp()) == 'A(j)*A(L_0)*A(-L_0) + A(L_0)*A(-L_0)*B(j)*C(L_1)*C(-L_1)'
 
     expr = A(-i)*(2*A(i)*A(j) + A(i)*B(j))
-    assert expr.expand(tensor=True) == 2*A(-i)*A(i)*A(j) + A(-i)*A(i)*B(j)
+    assert expr.expand() == 2*A(-i)*A(i)*A(j) + A(-i)*A(i)*B(j)
 
     expr = 2*A(i)*A(-i)
     assert expr.coeff == 2
 
     expr = A(i)*(B(j)*C(k) + C(j)*(A(k) + D(k)))
     assert str(expr) == "A(i)*(B(j)*C(k) + C(j)*(A(k) + D(k)))"
-    assert str(expr.expand(tensor=True)) == "A(i)*B(j)*C(k) + A(i)*C(j)*A(k) + A(i)*C(j)*D(k)"
+    assert str(expr.expand()) == "A(i)*B(j)*C(k) + A(i)*C(j)*A(k) + A(i)*C(j)*D(k)"
 
     assert isinstance(TensMul(3), TensMul)
     tm = TensMul(3).doit()
@@ -1823,13 +1823,13 @@ def test_tensor_expand():
     p1 = B(j)*B(-j) + B(j)*C(-j)
     p2 = C(-i)*p1
     p3 = A(i)*p2
-    assert p3.expand(tensor=True) == A(i)*C(-i)*B(j)*B(-j) + A(i)*C(-i)*B(j)*C(-j)
+    assert p3.expand() == A(i)*C(-i)*B(j)*B(-j) + A(i)*C(-i)*B(j)*C(-j)
 
     expr = A(i)*(B(-i) + C(-i)*(B(j)*B(-j) + B(j)*C(-j)))
-    assert expr.expand(tensor=True) == A(i)*B(-i) + A(i)*C(-i)*B(j)*B(-j) + A(i)*C(-i)*B(j)*C(-j)
+    assert expr.expand() == A(i)*B(-i) + A(i)*C(-i)*B(j)*B(-j) + A(i)*C(-i)*B(j)*C(-j)
 
     expr = C(-i)*(B(j)*B(-j) + B(j)*C(-j))
-    assert expr.expand(tensor=True) == C(-i)*B(j)*B(-j) + C(-i)*B(j)*C(-j)
+    assert expr.expand() == C(-i)*B(j)*B(-j) + C(-i)*B(j)*C(-j)
 
 
 def test_tensor_alternative_construction():
