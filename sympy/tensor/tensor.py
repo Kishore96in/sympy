@@ -2619,7 +2619,7 @@ class TensAdd(TensExpr, AssocOp):
         Canonicalize using the Butler-Portugal algorithm for canonicalization
         under monoterm symmetries.
         """
-        expr = self.expand(tensor=True, deep=True)
+        expr = self.expand()
         if isinstance(expr, self.func):
             args = [canon_bp(x) for x in expr.args]
             res = TensAdd(*args).doit(deep=False)
@@ -2715,7 +2715,7 @@ class TensAdd(TensExpr, AssocOp):
     def data(self):
         deprecate_data()
         with ignore_warnings(SymPyDeprecationWarning):
-            return _tensor_data_substitution_dict[self.expand(tensor=True, deep=True)]
+            return _tensor_data_substitution_dict[self.expand()]
 
     @data.setter
     def data(self, data):
@@ -3029,7 +3029,7 @@ class Tensor(TensExpr):
     def canon_bp(self):
         if self.is_canon_bp:
             return self
-        expr = self.expand(tensor=True, deep=True)
+        expr = self.expand()
         g, dummies, msym = expr._index_structure.indices_canon_args()
         v = components_canon_args([expr.component])
         can = canonicalize(g, dummies, msym, *v)
@@ -3924,7 +3924,7 @@ class TensMul(TensExpr, AssocOp):
         """
         if self._is_canon_bp:
             return self
-        expr = self.expand(tensor=True, deep=True)
+        expr = self.expand()
         if isinstance(expr, TensAdd):
             return expr.canon_bp()
         if not expr.components:
@@ -3985,7 +3985,7 @@ class TensMul(TensExpr, AssocOp):
         >>> t.contract_metric(g).canon_bp()
         p(L_0)*q(-L_0)
         """
-        expr = self.expand(tensor=True, deep=True)
+        expr = self.expand()
         if self != expr:
             expr = canon_bp(expr)
             return contract_metric(expr, g)
@@ -4184,7 +4184,7 @@ class TensMul(TensExpr, AssocOp):
     def data(self):
         deprecate_data()
         with ignore_warnings(SymPyDeprecationWarning):
-            dat = _tensor_data_substitution_dict[self.expand(tensor=True, deep=True)]
+            dat = _tensor_data_substitution_dict[self.expand()]
         return dat
 
     @data.setter
@@ -5040,7 +5040,7 @@ def riemann_cyclic(t2):
     >>> riemann_cyclic(t)
     0
     """
-    t2 = t2.expand(tensor=True, deep=True)
+    t2 = t2.expand()
     if isinstance(t2, (TensMul, Tensor)):
         args = [t2]
     else:
