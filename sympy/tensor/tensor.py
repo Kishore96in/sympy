@@ -2598,9 +2598,6 @@ class TensAdd(TensExpr, AssocOp):
             indices.extend([i for i in get_indices(arg) if i not in indices])
         return indices
 
-    def _eval_expand_tensor(self, **hints):
-        return self.doit(deep=False)
-
     def __call__(self, *indices):
         deprecate_call()
         free_args = self.free_args
