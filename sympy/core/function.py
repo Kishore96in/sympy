@@ -2484,7 +2484,7 @@ def diff(f, *symbols, **kwargs):
 
 
 def expand(e, deep=True, modulus=None, power_base=True, power_exp=True,
-        mul=True, log=True, multinomial=True, basic=True, tensor=True, **hints):
+        mul=True, log=True, multinomial=True, basic=True, **hints):
     r"""
     Expand an expression using methods given as hints.
 
@@ -2812,7 +2812,6 @@ def expand(e, deep=True, modulus=None, power_base=True, power_exp=True,
     hints['log'] = log
     hints['multinomial'] = multinomial
     hints['basic'] = basic
-    hints['tensor'] = tensor
     return sympify(e).expand(deep=deep, modulus=modulus, **hints)
 
 # This is a special application of two hints
