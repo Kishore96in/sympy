@@ -730,6 +730,11 @@ def test_mul():
     assert t == 1
     raises(ValueError, lambda: A(a, b)*A(a, c))
 
+    #Check if TensMul.doit correctly extracts the coeff
+    K = TensorHead('K', [Lorentz])
+    expr = TensMul(K(a), TensAdd(2, -2, 2*K(b)*K(-b)))
+    assert expr.doit() == 2*K(a)*K(b)*K(-b)
+
 def test_substitute_indices():
     Lorentz = TensorIndexType('Lorentz', dummy_name='L')
     i, j, k, l, m, n, p, q = tensor_indices('i,j,k,l,m,n,p,q', Lorentz)
