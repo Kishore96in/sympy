@@ -3623,11 +3623,19 @@ class TensMul(TensExpr, AssocOp):
         else:
             args = self.args
 
-        args = [arg for arg in args if arg != self.identity]
-
-        # Extract non-tensor coefficients:
-        coeff = reduce(lambda a, b: a*b, [arg for arg in args if not isinstance(arg, TensExpr)], S.One)
-        args = [arg for arg in args if isinstance(arg, TensExpr)]
+        #Extract non-tensor coefficients
+        newargs = []
+        coeff = S.One
+        for arg in args:
+            if not isinstance(arg, TensExpr):
+                coeff *= arg
+            elif isinstance(arg, TensMul):
+                arg = arg.doit(deep=False) #Make sure the coeff is extracted correctly
+                coeff *= arg.coeff
+                newargs.append(arg.nocoeff)
+            else:
+                newargs.append(arg)
+        args = newargs
 
         if len(args) == 0:
             return coeff
