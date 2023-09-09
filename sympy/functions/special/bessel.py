@@ -10,7 +10,7 @@ from sympy.core.numbers import Rational, pi, I
 from sympy.core.power import Pow
 from sympy.core.symbol import Dummy, uniquely_named_symbol, Wild
 from sympy.core.sympify import sympify
-from sympy.functions.combinatorial.factorials import factorial
+from sympy.functions.combinatorial.factorials import factorial, RisingFactorial
 from sympy.functions.elementary.trigonometric import sin, cos, csc, cot
 from sympy.functions.elementary.integers import ceiling
 from sympy.functions.elementary.exponential import exp, log
@@ -735,6 +735,23 @@ class besselk(BesselBase):
                 term = p*(digamma(k + nu + 1) + digamma(k + 1))
                 c.append(term)
             return a + Add(*b) + Add(*c) # Order term comes from a
+        elif exp.is_positive:
+            #Reference: https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/01/0003/ (only for non-integer order)
+            r = (z/2)._eval_nseries(x, n, logx, cdir).removeO()
+
+            newn_a = ceiling((n+nu)/exp)
+            newn_b = ceiling((n-nu)/exp)
+
+            a, b = [], []
+            for k in range((newn_a+1)//2):
+                a.append(
+                    gamma(nu)*r**(2*k-nu)/(2*RisingFactorial(1-nu, k)*factorial(k))
+                )
+            for k in range((newn_b+1)//2):
+                b.append(
+                    gamma(-nu)*r**(2*k+nu)/(2*RisingFactorial(nu+1, k)*factorial(k))
+                )
+            return Add(*a) + Add(*b) + Order(x**n, x)
 
         return super(besselk, self)._eval_nseries(x, n, logx, cdir)
 
