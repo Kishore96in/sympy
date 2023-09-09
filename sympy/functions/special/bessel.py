@@ -693,66 +693,67 @@ class besselk(BesselBase):
         from sympy.series.order import Order
         nu, z = self.args
 
-        # In case of powers less than 1, number of terms need to be computed
-        # separately to avoid repeated callings of _eval_nseries with wrong n
         try:
             _, exp = z.leadterm(x)
         except (ValueError, NotImplementedError):
             return self
 
-        if exp.is_positive and nu.is_integer:
-            #Reference: https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/02/0008/ (only for integer order)
-            newn = ceiling(n/exp)
-            bn = besseli(nu, z)
-            a = ((-1)**(nu - 1)*log(z/2)*bn)._eval_nseries(x, n, logx, cdir)
+        # In case of powers less than 1, number of terms need to be computed
+        # separately to avoid repeated callings of _eval_nseries with wrong n
+        if exp.is_positive:
+            if nu.is_integer:
+                #Reference: https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/02/0008/ (only for integer order)
+                newn = ceiling(n/exp)
+                bn = besseli(nu, z)
+                a = ((-1)**(nu - 1)*log(z/2)*bn)._eval_nseries(x, n, logx, cdir)
 
-            b, c = [], []
-            o = Order(x**n, x)
-            r = (z/2)._eval_nseries(x, n, logx, cdir).removeO()
-            if r is S.Zero:
-                return Order(log(z) + z**(-nu) + z**nu)
-            t = (_mexpand(r**2) + o).removeO()
+                b, c = [], []
+                o = Order(x**n, x)
+                r = (z/2)._eval_nseries(x, n, logx, cdir).removeO()
+                if r is S.Zero:
+                    return Order(log(z) + z**(-nu) + z**nu)
+                t = (_mexpand(r**2) + o).removeO()
 
-            if nu > S.Zero:
-                term = r**(-nu)*factorial(nu - 1)/2
-                b.append(term)
-                for k in range(1, nu):
-                    denom = (k - nu)*k
-                    if denom == S.Zero:
-                        term *= t/k
-                    else:
-                        term *= t/denom
-                    term = (_mexpand(term) + o).removeO()
+                if nu > S.Zero:
+                    term = r**(-nu)*factorial(nu - 1)/2
                     b.append(term)
+                    for k in range(1, nu):
+                        denom = (k - nu)*k
+                        if denom == S.Zero:
+                            term *= t/k
+                        else:
+                            term *= t/denom
+                        term = (_mexpand(term) + o).removeO()
+                        b.append(term)
 
-            p = r**nu*(-1)**nu/(2*factorial(nu))
-            term = p*(digamma(nu + 1) - S.EulerGamma)
-            c.append(term)
-            for k in range(1, (newn + 1)//2):
-                p *= t/(k*(k + nu))
-                p = (_mexpand(p) + o).removeO()
-                term = p*(digamma(k + nu + 1) + digamma(k + 1))
+                p = r**nu*(-1)**nu/(2*factorial(nu))
+                term = p*(digamma(nu + 1) - S.EulerGamma)
                 c.append(term)
-            return a + Add(*b) + Add(*c) # Order term comes from a
-        elif exp.is_positive:
-            #Reference: https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/01/0003/ (only for non-integer order)
-            r = (z/2)._eval_nseries(x, n, logx, cdir).removeO()
-            if r is S.Zero:
-                return Order(z**(-nu), x)
+                for k in range(1, (newn + 1)//2):
+                    p *= t/(k*(k + nu))
+                    p = (_mexpand(p) + o).removeO()
+                    term = p*(digamma(k + nu + 1) + digamma(k + 1))
+                    c.append(term)
+                return a + Add(*b) + Add(*c) # Order term comes from a
+            else:
+                #Reference: https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/01/0003/ (only for non-integer order)
+                r = (z/2)._eval_nseries(x, n, logx, cdir).removeO()
+                if r is S.Zero:
+                    return Order(z**(-nu), x)
 
-            newn_a = ceiling((n+nu)/exp)
-            newn_b = ceiling((n-nu)/exp)
+                newn_a = ceiling((n+nu)/exp)
+                newn_b = ceiling((n-nu)/exp)
 
-            a, b = [], []
-            for k in range((newn_a+1)//2):
-                a.append(
-                    gamma(nu)*r**(2*k-nu)/(2*RisingFactorial(1-nu, k)*factorial(k))
-                )
-            for k in range((newn_b+1)//2):
-                b.append(
-                    gamma(-nu)*r**(2*k+nu)/(2*RisingFactorial(nu+1, k)*factorial(k))
-                )
-            return Add(*a) + Add(*b) + Order(x**n, x)
+                a, b = [], []
+                for k in range((newn_a+1)//2):
+                    a.append(
+                        gamma(nu)*r**(2*k-nu)/(2*RisingFactorial(1-nu, k)*factorial(k))
+                    )
+                for k in range((newn_b+1)//2):
+                    b.append(
+                        gamma(-nu)*r**(2*k+nu)/(2*RisingFactorial(nu+1, k)*factorial(k))
+                    )
+                return Add(*a) + Add(*b) + Order(x**n, x)
 
         return super(besselk, self)._eval_nseries(x, n, logx, cdir)
 
