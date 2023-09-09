@@ -711,7 +711,7 @@ class besselk(BesselBase):
             o = Order(x**n, x)
             r = (z/2)._eval_nseries(x, n, logx, cdir).removeO()
             if r is S.Zero:
-                return o
+                return Order(log(z) + z**(-nu) + z**nu)
             t = (_mexpand(r**2) + o).removeO()
 
             if nu > S.Zero:
