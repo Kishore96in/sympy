@@ -738,6 +738,8 @@ class besselk(BesselBase):
         elif exp.is_positive:
             #Reference: https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/01/0003/ (only for non-integer order)
             r = (z/2)._eval_nseries(x, n, logx, cdir).removeO()
+            if r is S.Zero:
+                return Order(z**(-nu), x)
 
             newn_a = ceiling((n+nu)/exp)
             newn_b = ceiling((n-nu)/exp)
