@@ -690,8 +690,6 @@ class besselk(BesselBase):
         return super(besselk, self)._eval_as_leading_term(x, logx, cdir)
 
     def _eval_nseries(self, x, n, logx, cdir=0):
-        # Refer https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/02/0008/
-        # for more information on nseries expansion of besselk function.
         from sympy.series.order import Order
         nu, z = self.args
 
@@ -703,6 +701,7 @@ class besselk(BesselBase):
             return self
 
         if exp.is_positive and nu.is_integer:
+            #Reference: https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/02/0008/ (only for integer order)
             newn = ceiling(n/exp)
             bn = besseli(nu, z)
             a = ((-1)**(nu - 1)*log(z/2)*bn)._eval_nseries(x, n, logx, cdir)
