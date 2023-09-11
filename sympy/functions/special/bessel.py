@@ -701,6 +701,10 @@ class besselk(BesselBase):
         # In case of powers less than 1, number of terms need to be computed
         # separately to avoid repeated callings of _eval_nseries with wrong n
         if exp.is_positive:
+            r = (z/2)._eval_nseries(x, n, logx, cdir).removeO()
+            if r is S.Zero:
+                return Order(z**(-nu) + z**nu, x)
+
             if nu.is_integer:
                 #Reference: https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/02/0008/ (only for integer order)
                 newn = ceiling(n/exp)
@@ -709,9 +713,6 @@ class besselk(BesselBase):
 
                 b, c = [], []
                 o = Order(x**n, x)
-                r = (z/2)._eval_nseries(x, n, logx, cdir).removeO()
-                if r is S.Zero:
-                    return Order(log(z) + z**(-nu) + z**nu)
                 t = (_mexpand(r**2) + o).removeO()
 
                 if nu > S.Zero:
@@ -737,10 +738,6 @@ class besselk(BesselBase):
                 return a + Add(*b) + Add(*c) # Order term comes from a
             else:
                 #Reference: https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/01/0003/ (only for non-integer order)
-                r = (z/2)._eval_nseries(x, n, logx, cdir).removeO()
-                if r is S.Zero:
-                    return Order(z**(-nu), x)
-
                 newn_a = ceiling((n+nu)/exp)
                 newn_b = ceiling((n-nu)/exp)
 
