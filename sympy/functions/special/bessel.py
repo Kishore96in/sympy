@@ -705,6 +705,7 @@ class besselk(BesselBase):
             if r is S.Zero:
                 return Order(z**(-nu) + z**nu, x)
 
+            o = Order(x**n, x)
             if nu.is_integer:
                 #Reference: https://functions.wolfram.com/Bessel-TypeFunctions/BesselK/06/01/04/01/02/0008/ (only for integer order)
                 newn = ceiling(n/exp)
@@ -712,7 +713,6 @@ class besselk(BesselBase):
                 a = ((-1)**(nu - 1)*log(z/2)*bn)._eval_nseries(x, n, logx, cdir)
 
                 b, c = [], []
-                o = Order(x**n, x)
                 t = (_mexpand(r**2) + o).removeO()
 
                 if nu > S.Zero:
@@ -743,14 +743,12 @@ class besselk(BesselBase):
 
                 a, b = [], []
                 for k in range((newn_a+1)//2):
-                    a.append(
-                        gamma(nu)*r**(2*k-nu)/(2*RisingFactorial(1-nu, k)*factorial(k))
-                    )
+                    term = gamma(nu)*r**(2*k-nu)/(2*RisingFactorial(1-nu, k)*factorial(k))
+                    a.append(_mexpand(term))
                 for k in range((newn_b+1)//2):
-                    b.append(
-                        gamma(-nu)*r**(2*k+nu)/(2*RisingFactorial(nu+1, k)*factorial(k))
-                    )
-                return Add(*a) + Add(*b) + Order(x**n, x)
+                    term = gamma(-nu)*r**(2*k+nu)/(2*RisingFactorial(nu+1, k)*factorial(k))
+                    b.append(_mexpand(term))
+                return Add(*a) + Add(*b) + o
 
         return super(besselk, self)._eval_nseries(x, n, logx, cdir)
 
