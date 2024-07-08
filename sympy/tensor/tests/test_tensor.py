@@ -1,3 +1,5 @@
+import pickle
+
 from sympy.concrete.summations import Sum
 from sympy.core.function import expand
 from sympy.core.numbers import Integer
@@ -2229,3 +2231,10 @@ def test_TensMul_nocoeff():
 
     expr = TensMul(2, K(i), P(j))
     assert expr.coeff * expr.nocoeff == expr
+
+def test_eps_pickle():
+    R3 = TensorIndexType('R3', dim=3)
+    p, q, r = tensor_indices("p q r", R3)
+    eps = R3.epsilon
+
+    assert eps(p,q,r) == pickle.loads(pickle.dumps(eps(p,q,r)))
