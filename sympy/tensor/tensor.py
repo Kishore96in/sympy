@@ -2712,7 +2712,6 @@ class TensAdd(TensExpr, AssocOp):
             arg._extract_data(replacement_dict) if
             isinstance(arg, TensExpr) else ([], arg) for arg in self.args
         ])
-        arrays = [Array(i) for i in arrays]
         ref_indices = args_indices[0]
         for i in range(1, len(args_indices)):
             indices = args_indices[i]
@@ -3229,9 +3228,6 @@ class Tensor(TensExpr):
         else:
             raise ValueError(f"{self} not found in {replacement_dict}")
 
-        # TODO: inefficient, this should be done at root level only:
-        replacement_dict = {k: Array(v) for k, v in replacement_dict.items()}
-        array = Array(array)
 
         dum1 = self.dum
         dum2 = other.dum
