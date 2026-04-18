@@ -5,7 +5,7 @@ from collections.abc import Iterable
 from functools import reduce
 
 from sympy.core.parameters import global_parameters
-from sympy.core.basic import Atom
+from sympy.core.basic import Atom, Basic
 from sympy.core.expr import Expr
 from sympy.core.numbers import int_valued
 from sympy.core.numbers import Integer
@@ -3047,6 +3047,14 @@ class Permutation(Atom):
 
     # XXX Deprecated flag
     print_cyclic = None
+
+    __hash__ : Callable[[object], int] = Basic.__hash__
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return (self._array_form == other._array_form)
+        else:
+            return False
 
 
 def _merge(arr, temp, left, mid, right):
